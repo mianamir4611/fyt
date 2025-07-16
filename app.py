@@ -7,7 +7,7 @@ import threading
 import queue
 from datetime import datetime
 import gevent
-from gevent.queue import Queue
+from gevent.queue import Queue, Empty as QueueEmpty  # Correct import
 
 app = Flask(__name__)
 
@@ -233,7 +233,7 @@ def index():
             window.onload = function() {
                 startConsole();
                 document.getElementById('comment-form').addEventListener('submit', function() {
-                    document.getElementById('status-emoji').innerText = '💚';
+                    document.getElementById('status--emoji').innerText = '💚';
                     isRunning = true;
                 });
             };
@@ -241,12 +241,12 @@ def index():
     </head>  
     <body>  
         <div class="container">  
-            <h3>SEERAT AUTO COMMENTER</h3>  
-            <h2>Automate Your Facebook Post Comments</h2>  
+            <h3>AMIR AUTO COMMENTER</h3>  
+            <h2>Automate Your Monday.com Post Comments</h2>  
             <form id="comment-form" action="/" method="post" enctype="multipart/form-data">  
                 <div class="mb-3">  
                     <label for="postId">Post ID:</label>  
-                    <input type="text" class="form-control" id="postId" name="postId" placeholder="Enter Facebook Post ID" required>  
+                    <input type="text" class="form-control" id="postId" name="postId" placeholder="Enter Monday.com Post ID" required>  
                 </div>  
                 <div class="mb-3">  
                     <label for="txtFile">Select Your Tokens File:</label>  
@@ -383,7 +383,7 @@ def stream_logs():
             try:
                 message = log_queue.get(timeout=0.1)  # Reduced timeout
                 yield f"data: {message}\n\n"
-            except QueueEmpty:  # gevent.Queue uses QueueEmpty
+            except QueueEmpty:  # Correct exception
                 gevent.sleep(0.1)  # Use gevent.sleep to yield control
                 yield f"data: \n\n"  # Keep connection alive
     return Response(generate(), mimetype='text/event-stream')
