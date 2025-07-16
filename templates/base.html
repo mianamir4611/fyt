@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Messenger & Post Comments</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f1c3a 0%, #2a5298 100%);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        .navbar {
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        .navbar-brand {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #00d4ff;
+            text-shadow: 0 0 10px #00d4ff, 0 0 20px #00d4ff;
+        }
+        .nav-link {
+            color: #fff !important;
+            font-size: 1.1rem;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #00ffcc !important;
+        }
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        .btn-custom {
+            width: 100%;
+            max-width: 250px; /* Limit button width for better mobile view */
+            padding: 15px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(45deg, #007bff, #00d4ff);
+            color: #fff;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 115, 255, 0.4);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInBounce 0.8s ease forwards;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .btn-custom:hover {
+            transform: translateY(-3px) scale(1.05);
+            background: linear-gradient(45deg, #00d4ff, #007bff);
+            box-shadow: 0 8px 20px rgba(0, 115, 255, 0.6);
+        }
+        @keyframes fadeInBounce {
+            0% { opacity: 0; transform: translateY(20px); }
+            50% { opacity: 1; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .btn-custom:nth-child(1) { animation-delay: 0.1s; }
+        .btn-custom:nth-child(2) { animation-delay: 0.2s; }
+        .btn-custom:nth-child(3) { animation-delay: 0.3s; }
+        .btn-custom:nth-child(4) { animation-delay: 0.4s; }
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #00d4ff;
+            color: #fff;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s ease;
+            width: 100%;
+            max-width: 400px; /* Limit form input width for mobile */
+            display: inline-block;
+            text-align: left;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #00ffcc;
+            box-shadow: 0 0 10px #00ffcc;
+        }
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .result {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #00d4ff;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            background: rgba(0, 0, 0, 0.8);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.5);
+            margin-top: auto;
+        }
+        .whatsapp-link {
+            color: #25d366;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .whatsapp-link i {
+            margin-right: 5px;
+        }
+        @media (max-width: 768px) {
+            .navbar-brand { font-size: 1.5rem; }
+            .nav-link { font-size: 1rem; margin: 0 5px; }
+            .btn-custom { font-size: 1.1rem; padding: 10px; max-width: 200px; }
+            .container { margin: 10px; padding: 15px; }
+            .form-control, .form-select { max-width: 100%; }
+            .result { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">SMS Messenger & Post Comments</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('post_convo_page') }}">Post Convo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('convo_page') }}">Convo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('token_check_page') }}">Token Check</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('get_uid_page') }}">Get UID</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="content-wrapper">
+        <div class="container">
+            {% if not request.path == '/' %}
+                {% block content %}{% endblock %}
+            {% else %}
+                <div class="row g-3 justify-content-center">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <a href="{{ url_for('post_convo_page') }}" class="btn btn-custom">Post Convo</a>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <a href="{{ url_for('convo_page') }}" class="btn btn-custom">Convo</a>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <a href="{{ url_for('token_check_page') }}" class="btn btn-custom">Token Check</a>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <a href="{{ url_for('get_uid_page') }}" class="btn btn-custom">Get UID</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <footer class="footer">
+        <p>© 2025 Made By Mian Amir 😈🐧</p>
+        <p><a href="https://wa.me/923114397148" class="whatsapp-link"><i class="fab fa-whatsapp"></i> Contact: +923114397148</a></p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

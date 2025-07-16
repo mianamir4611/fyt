@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-12">
+        <h2 class="text-center mb-4">Token Check</h2>
+        <form method="post">
+            <div class="mb-3">
+                <label for="token" class="form-label">Enter Token</label>
+                <input type="text" class="form-control" id="token" name="token" required>
+            </div>
+            <button type="submit" class="btn btn-custom">Check Token</button>
+        </form>
+        {% if result %}
+        <div class="result">
+            <h4>Result:</h4>
+            {% if result.status == 'success' %}
+                <p><strong>{{ result.message }}</strong></p>
+            {% else %}
+                <p><strong>Error: {{ result.message }}</strong></p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

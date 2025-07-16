@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-12">
+        <h2 class="text-center mb-4">Get UID</h2>
+        <form method="post">
+            <div class="mb-3">
+                <label for="token" class="form-label">Enter Token</label>
+                <input type="text" class="form-control" id="token" name="token" required>
+            </div>
+            <div class="mb-3">
+                <label for="uidType" class="form-label">Select UID Type</label>
+                <select class="form-select" id="uidType" name="uidType">
+                    <option value="post">Post UID</option>
+                    <option value="convo">Convo UID</option>
+                </select>
+            </div>
+            <div class="mb-3" id="postUrlInput" style="display: none;">
+                <label for="postUrl" class="form-label">Enter Post URL</label>
+                <input type="text" class="form-control" id="postUrl" name="postUrl" placeholder="e.g., https://www.facebook.com/username/posts/123456">
+            </div>
+            <button type="submit" class="btn btn-custom">Get UID</button>
+        </form>
+        {% if result %}
+        <div class="result">
+            <h4>Result:</h4>
+            {% if result.status == 'success' %}
+                {% if result.post_id %}
+                    <p>Post ID: <strong>{{ result.post_id }}</strong></p>
+                {% elif result.groups %}
+                    <p>Conversations:</p>
+                    <ul class="list-group">
+                    {% for group in result.groups %}
+                        <li class="list-group-item bg-transparent border-light text-white">TID: <strong>{{ group.tid }}</strong> - Name: <strong>{{ group.name }}</strong></li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% else %}
+                <p><strong>Error: {{ result.message }}</strong></p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+<script>
+    document.getElementById('uidType').addEventListener('change', function() {
+        document.getElementById('postUrlInput').style.display = this.value === 'post' ? 'block' : 'none';
+    });
+</script>
+{% endblock %}
