@@ -6,11 +6,13 @@ import sys
 import threading
 import queue
 from datetime import datetime
+import gevent
+from gevent.queue import Queue
 
 app = Flask(__name__)
 
 # Custom stream to capture print statements
-log_queue = queue.Queue()
+log_queue = Queue()  # Using gevent.Queue for async compatibility
 comment_thread = None
 stop_event = threading.Event()
 
@@ -198,7 +200,7 @@ def index():
                     })
                     .catch(error => {
                         console.error('Error stopping comments:', error);
-                        document.getElementById('console').innerText += '[!] Error stopping comments: ' + error + '\\n';
+                        document.getElementById('console').innerHTML += '<span class="error">[!] Error stopping comments: ' + error + '</span>\\n';
                         document.getElementById('status-emoji').innerText = '💔';
                         isRunning = false;
                     });
@@ -379,11 +381,11 @@ def stream_logs():
     def generate():
         while True:
             try:
-                message = log_queue.get(timeout=1)
+                message = log_queue.get(timeout=0.1)  # Reduced timeout
                 yield f"data: {message}\n\n"
-            except queue.Empty:
+            except QueueEmpty:  # gevent.Queue uses QueueEmpty
+                gevent.sleep(0.1)  # Use gevent.sleep to yield control
                 yield f"data: \n\n"  # Keep connection alive
-            time.sleep(0.1)
     return Response(generate(), mimetype='text/event-stream')
 
 if __name__ == '__main__':
